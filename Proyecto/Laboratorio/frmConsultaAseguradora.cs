@@ -27,7 +27,8 @@ namespace Laboratorio
 
         void funCancelar()
         {
-            txtActualizarNombre.Text = "";
+            txtActualizarNombre.Clear();
+            txtNombre.Clear();
             btnBuscar.Enabled = true;
             txtNombre.Enabled = true;
             grpActualizar.Enabled = false;
@@ -49,7 +50,7 @@ namespace Laboratorio
             try
             {
                 MySqlCommand mComando = new MySqlCommand(String.Format(
-                "SELECT ncodaseguradora, cempresaseguro FROM TRASEGURADORA"), clasConexion.funConexion());
+                "SELECT ncodaseguradora, cempresaseguro FROM MAASEGURADORA"), clasConexion.funConexion());
                 MySqlDataReader mReader = mComando.ExecuteReader();
 
                 while (mReader.Read())
@@ -91,7 +92,7 @@ namespace Laboratorio
                 else
                 {
                     MySqlCommand mComando = new MySqlCommand(String.Format(
-                    "SELECT ncodaseguradora, cempresaseguro FROM TRASEGURADORA WHERE cempresaseguro = '{0}' ", txtNombre.Text), clasConexion.funConexion());
+                    "SELECT ncodaseguradora, cempresaseguro FROM MAASEGURADORA WHERE cempresaseguro = '{0}' ", txtNombre.Text), clasConexion.funConexion());
                     MySqlDataReader mReader = mComando.ExecuteReader();
 
                     while (mReader.Read())
@@ -105,12 +106,16 @@ namespace Laboratorio
                         iContador++;
                     }
 
+
+                    btnCancelar.Enabled = true;
                     if (existe == false)
                     {
                         MessageBox.Show("No se encontraron resultados", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        funActualizar();
+                        btnCancelar.Enabled = false;
+                        txtNombre.Clear();
                     }
 
-                    btnCancelar.Enabled = true;
                 }
 
 
@@ -127,7 +132,9 @@ namespace Laboratorio
         {
             try
             {
-                    MySqlCommand mComando = new MySqlCommand(string.Format("UPDATE TRASEGURADORA SET cempresaseguro = '{0}' WHERE ncodaseguradora = '{1}'",
+                if (MessageBox.Show("¿Desea modificar?", "Confirmacion", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    MySqlCommand mComando = new MySqlCommand(string.Format("UPDATE MAASEGURADORA SET cempresaseguro = '{0}' WHERE ncodaseguradora = '{1}'",
                     txtActualizarNombre.Text, sCodigoTabla), clasConexion.funConexion());
                     mComando.ExecuteNonQuery();
                     funActualizar();
@@ -135,6 +142,8 @@ namespace Laboratorio
                     txtNombre.Text = "";
                     funCancelar();
                     funActualizar();
+                } 
+                    
             }
             catch
             {
@@ -155,14 +164,17 @@ namespace Laboratorio
         {
             try
             {
-                MySqlCommand mComando = new MySqlCommand(string.Format("DELETE FROM TRASEGURADORA WHERE ncodaseguradora = '{0}'",
-                sCodigoTabla), clasConexion.funConexion());
-                mComando.ExecuteNonQuery();
-                funActualizar();
-                MessageBox.Show("Dato eliminado con exito", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                txtNombre.Text = "";
-                funCancelar();
-                funActualizar();
+                if (MessageBox.Show("¿Desea eliminar?", "Confirmacion", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    MySqlCommand mComando = new MySqlCommand(string.Format("DELETE FROM MAASEGURADORA WHERE ncodaseguradora = '{0}'",
+                    sCodigoTabla), clasConexion.funConexion());
+                    mComando.ExecuteNonQuery();
+                    funActualizar();
+                    MessageBox.Show("Dato eliminado con exito", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    txtNombre.Text = "";
+                    funCancelar();
+                    funActualizar();
+                }
             }
             catch
             {

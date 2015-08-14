@@ -20,6 +20,7 @@ namespace Laboratorio
         */
         string sSexo;
         string sCadena;
+        string sCodigoPersona;
         public frmEmpleados()
         {
             InitializeComponent();
@@ -32,7 +33,7 @@ namespace Laboratorio
             string sNombre;
             cmbPuesto.Items.Clear();
             MySqlCommand mComando = new MySqlCommand(String.Format(
-                   "SELECT ncodpuesto, ndescpuesto FROM PUESTO", txtNombre.Text), clasConexion.funConexion());
+                   "SELECT ncodpuesto, ndescpuesto FROM MAPUESTO", txtNombre.Text), clasConexion.funConexion());
             MySqlDataReader mReader = mComando.ExecuteReader();
 
             while (mReader.Read())
@@ -48,9 +49,8 @@ namespace Laboratorio
 
         void funObtenerCodPersona()
         {
-            string sCodigoPersona;
             MySqlCommand mComando = new MySqlCommand(String.Format(
-                   "SELECT ncodpersona FROM PERSONA WHERE cdpipersona= '{0}'", txtDpi.Text), clasConexion.funConexion());
+                   "SELECT ncodpersona FROM MAPERSONA WHERE cdpipersona= '{0}'", txtDpi.Text), clasConexion.funConexion());
             MySqlDataReader mReader = mComando.ExecuteReader();
 
             while (mReader.Read())
@@ -69,7 +69,7 @@ namespace Laboratorio
 
             try
             {
-                    MySqlCommand mComando = new MySqlCommand(string.Format("Insert into EMPLEADO (ncodpersona,ncodpuesto) values ('{0}','{1}')",
+                    MySqlCommand mComando = new MySqlCommand(string.Format("Insert into TREMPLEADO (ncodpersona,ncodpuesto) values ('{0}','{1}')",
                     sCodigoPersona, sCodPuesto), clasConexion.funConexion());
                     mComando.ExecuteNonQuery();
 
@@ -78,14 +78,6 @@ namespace Laboratorio
             {
                 MessageBox.Show("Se produjo un error", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
-
-            txtApellido.Clear();
-            txtDireccion.Clear();
-            txtDpi.Clear();
-            txtEmail.Clear();
-            txtNit.Clear();
-            txtNombre.Clear();
 
         }
 
@@ -119,7 +111,7 @@ namespace Laboratorio
         {
             try
             {
-                if (String.IsNullOrEmpty(txtDpi.Text) && String.IsNullOrEmpty(txtNombre.Text) && String.IsNullOrEmpty(txtApellido.Text) && String.IsNullOrEmpty(txtDireccion.Text) && String.IsNullOrEmpty(txtEmail.Text) && String.IsNullOrEmpty(txtNit.Text))
+                if (String.IsNullOrEmpty(txtDpi.Text) && String.IsNullOrEmpty(txtNombre.Text) && String.IsNullOrEmpty(txtApellido.Text) && String.IsNullOrEmpty(txtNit.Text))
                 {
                     MessageBox.Show("Por favor llene todos los campos", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 }
@@ -133,11 +125,23 @@ namespace Laboratorio
                         sSexo = "Femenino";
                     }
                     //MessageBox.Show(txtDireccion.Text + txtEmail.Text + txtNombre.Text + txtApellido.Text + txtDpi.Text + dtpNacimiento.Text + sSexo + txtNit.Text);
-                    MySqlCommand mComando = new MySqlCommand(string.Format("Insert into PERSONA (cdireccionpersona,cemailpersona,cnombrepersona,capellidopersona,cdpipersona,dfechanacpersona,csexopersona,cnitpersona) values ('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}')",
-                    txtDireccion.Text,txtEmail.Text,txtNombre.Text,txtApellido.Text,txtDpi.Text,dtpNacimiento.Text,sSexo,txtNit.Text), clasConexion.funConexion());
+                    MySqlCommand mComando = new MySqlCommand(string.Format("Insert into MAPERSONA (cnombrepersona,capellidopersona,cdpipersona,dfechanacpersona,csexopersona,cnitpersona) values ('{0}','{1}','{2}','{3}','{4}','{5}')",
+                    txtNombre.Text,txtApellido.Text,txtDpi.Text,dtpNacimiento.Text,sSexo,txtNit.Text), clasConexion.funConexion());
                     mComando.ExecuteNonQuery();
                     MessageBox.Show("Se inserto con exito", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     funObtenerCodPersona();
+                    txtDpi.Enabled = false;
+                    txtNombre.Enabled = false;
+                    txtApellido.Enabled = false;
+                    rbFemenino.Enabled = false;
+                    rbMasculino.Enabled = false;
+                    dtpNacimiento.Enabled = false;
+                    txtNit.Enabled = false;
+                    cmbPuesto.Enabled = false;
+                    btnGuardar.Enabled = false;
+                    txtDireccion.Clear();
+                    txtTelefono.Clear();
+                    txtEmail.Clear();
                 }
 
             }
@@ -145,6 +149,98 @@ namespace Laboratorio
             {
                 MessageBox.Show("Se produjo un error", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblAgregarDireccion_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (String.IsNullOrEmpty(txtDireccion.Text))
+                {
+                    MessageBox.Show("Por favor llene todos los campos", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                }
+                else
+                {
+                    MySqlCommand mComando = new MySqlCommand(string.Format("Insert into TRDIRECCION (cdireccion,ncodpersona) values ('{0}','{1}')",
+                    txtDireccion.Text, sCodigoPersona), clasConexion.funConexion());
+                    mComando.ExecuteNonQuery();
+                    MessageBox.Show("Se inserto con exito", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    txtDireccion.Clear();
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Se produjo un error", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void lblAgregarTelefono_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (String.IsNullOrEmpty(txtTelefono.Text))
+                {
+                    MessageBox.Show("Por favor llene todos los campos", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                }
+                else
+                {
+                    MySqlCommand mComando = new MySqlCommand(string.Format("Insert into TRTELEFONO (ctelefono,ncodpersona) values ('{0}','{1}')",
+                    txtTelefono.Text, sCodigoPersona), clasConexion.funConexion());
+                    mComando.ExecuteNonQuery();
+                    MessageBox.Show("Se inserto con exito", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    txtTelefono.Clear();
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Se produjo un error", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void lblAgregarEmail_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (String.IsNullOrEmpty(txtEmail.Text))
+                {
+                    MessageBox.Show("Por favor llene todos los campos", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                }
+                else
+                {
+                    MySqlCommand mComando = new MySqlCommand(string.Format("Insert into TREMAIL (cemail,ncodpersona) values ('{0}','{1}')",
+                    txtEmail.Text, sCodigoPersona), clasConexion.funConexion());
+                    mComando.ExecuteNonQuery();
+                    MessageBox.Show("Se inserto con exito", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    txtEmail.Clear();
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Se produjo un error", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnCancelar_Click(object sender, EventArgs e)
+        {
+            txtDpi.Enabled = true;
+            txtDpi.Clear();
+            txtNombre.Enabled = true;
+            txtNombre.Clear();
+            txtApellido.Enabled = true;
+            txtApellido.Clear();
+            txtDireccion.Clear();
+            txtTelefono.Clear();
+            txtEmail.Clear();
+            txtNit.Enabled = true;
+            txtNit.Clear();
+            btnGuardar.Enabled = true;
+
+
         }
     }
 }

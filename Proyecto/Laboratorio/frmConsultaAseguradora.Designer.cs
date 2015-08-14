@@ -197,6 +197,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlLight;
             this.ClientSize = new System.Drawing.Size(684, 361);
+            this.ControlBox = false;
             this.Controls.Add(this.grpActualizar);
             this.Controls.Add(this.grdConsultarAseguradora);
             this.Controls.Add(this.txtNombre);
